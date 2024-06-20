@@ -9,26 +9,28 @@ import SwiftUI
 import Network
 
 struct ContentView: View {
-//    let monitor: NWPathMonitor
-//
-//    public func startMonitoring() {
-//        monitor.pathUpdateHandler = { path in
-//            if path.status == .satisfied {
-//                print("Internet connection is available.")
-//                // Perform actions when internet is available
-//            } else {
-//                print("Internet connection is not available.")
-//                // Perform actions when internet is not available
-//            }
-//        }
-//    }
+    func checkWifi() {
+        NetworkMonitor.shered.startMonitoring()
+    }
+    init() {
+        checkWifi()
+    }
+
+    func textConnection() -> String {
+        var texto: String = ""
+        if NetworkMonitor.shered.isConnected {
+           return texto.appending("está conectado")
+        } else {
+           return texto.appending("NÃO está conectado")
+        }
+    }
 
     var body: some View {
         VStack {
             Image(systemName: "globe")
                 .imageScale(.large)
                 .foregroundStyle(.tint)
-            Text("Hello, world! Let's go make a ping plugin S2")
+            Text("\(textConnection())")
         }
         .padding()
     }
@@ -46,7 +48,10 @@ final class NetworkMonitor {
     }
 
     public func startMonitoring() {
-
+        monitor.start(queue: queue)
+        monitor.pathUpdateHandler = { [weak self] path in
+            self?.isConnected = path.status == .satisfied
+        }
     }
 
     public func stopMonitoring() {
