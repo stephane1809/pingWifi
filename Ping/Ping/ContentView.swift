@@ -49,8 +49,14 @@ final class NetworkMonitor {
 
     public func startMonitoring() {
         monitor.start(queue: queue)
-        monitor.pathUpdateHandler = { [weak self] path in
-            self?.isConnected = path.status == .satisfied
+        monitor.pathUpdateHandler = { path in
+            if path.status == .satisfied {
+                self.isConnected = true
+                print("Está conectado com wifi")
+            } else {
+                self.isConnected = false
+                print("NÃO está conectado com wifi")
+            }
         }
     }
 
